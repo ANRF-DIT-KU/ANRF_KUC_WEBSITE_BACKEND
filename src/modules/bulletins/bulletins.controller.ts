@@ -24,8 +24,13 @@ export const createBulletinController = asyncHandler(async (req: Request, res: R
   const downloadUrl = file ? `/uploads/${file.filename}` : undefined;
   const fileName = file ? file.originalname : undefined;
 
+  const projectId =
+    req.user!.role === "admin" && req.body.projectId
+      ? String(req.body.projectId)
+      : req.user!.projectId;
+
   const created = await createBulletinService({
-    projectId: req.user!.projectId,
+    projectId,
     volume,
     issue,
     title,
@@ -41,7 +46,7 @@ export const createBulletinController = asyncHandler(async (req: Request, res: R
 
 export const updateBulletinController = asyncHandler(async (req: Request, res: Response) => {
   const id = String(req.params.id);
-  const { volume, issue, title, summary, publishDate, themeColor } = req.body;
+  const { volume, issue, title, summary, publishDate, themeColor, projectId } = req.body;
   if (!volume || !issue || !title || !summary) {
     throw new AppError("Volume, issue, title, and summary are required.", 400);
   }
@@ -50,8 +55,8 @@ export const updateBulletinController = asyncHandler(async (req: Request, res: R
   const downloadUrl = file ? `/uploads/${file.filename}` : undefined;
   const fileName = file ? file.originalname : undefined;
 
-  const updated = await updateBulletinService(id, req.user!.projectId, {
-    projectId: req.user!.projectId,
+  const updated = await updateBulletinService(id, req.user!.projectId, req.user!.role, {
+    projectId: projectId ? String(projectId) : req.user!.projectId,
     volume,
     issue,
     title,
@@ -67,7 +72,7 @@ export const updateBulletinController = asyncHandler(async (req: Request, res: R
 
 export const deleteBulletinController = asyncHandler(async (req: Request, res: Response) => {
   const id = String(req.params.id);
-  await deleteBulletinService(id, req.user!.projectId);
+  await deleteBulletinService(id, req.user!.projectId, req.user!.role);
   res.status(204).send();
 });
 

@@ -21,8 +21,13 @@ export const uploadGalleryController = asyncHandler(async (req: Request, res: Re
   }
 
   const srcs = files.map((f) => `/uploads/${f.filename}`);
+  const projectId =
+    req.user!.role === "admin" && req.body.projectId
+      ? String(req.body.projectId)
+      : req.user!.projectId;
+
   const created = await createGalleryItemsService({
-    projectId: req.user!.projectId,
+    projectId,
     uploadedBy: req.user!.role,
     srcs,
     caption: req.body.caption,
@@ -35,14 +40,19 @@ export const updateGalleryCaptionController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = String(req.params.id);
     const caption = String(req.body.caption ?? "");
-    const updated = await updateGalleryCaptionService(id, req.user!.projectId, caption);
+    const updated = await updateGalleryCaptionService(
+      id,
+      req.user!.projectId,
+      req.user!.role,
+      caption,
+    );
     res.json(updated);
   },
 );
 
 export const deleteGalleryController = asyncHandler(async (req: Request, res: Response) => {
   const id = String(req.params.id);
-  await deleteGalleryItemService(id, req.user!.projectId);
+  await deleteGalleryItemService(id, req.user!.projectId, req.user!.role);
   res.status(204).send();
 });
 

@@ -9,7 +9,12 @@ import {
 } from "./queries.service.js";
 
 export const listQueriesController = asyncHandler(async (req: Request, res: Response) => {
-  const queries = await listQueriesForProjectService(req.user!.projectId);
+  const filterProjectId = req.query.projectId ? String(req.query.projectId) : undefined;
+  const queries = await listQueriesForProjectService(
+    req.user!.projectId,
+    req.user!.role,
+    filterProjectId,
+  );
   res.json(queries);
 });
 
@@ -26,14 +31,19 @@ export const updateQueryReadController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = String(req.params.id);
     const { read } = req.body;
-    const updated = await updateQueryReadService(id, req.user!.projectId, Boolean(read));
+    const updated = await updateQueryReadService(
+      id,
+      req.user!.projectId,
+      req.user!.role,
+      Boolean(read),
+    );
     res.json(updated);
   },
 );
 
 export const deleteQueryController = asyncHandler(async (req: Request, res: Response) => {
   const id = String(req.params.id);
-  await deleteQueryService(id, req.user!.projectId);
+  await deleteQueryService(id, req.user!.projectId, req.user!.role);
   res.status(204).send();
 });
 

@@ -2,7 +2,22 @@ import { Op } from "sequelize";
 import { ContactQuery } from "../../models/index.js";
 import { AppError } from "../../utils/AppError.js";
 
-export async function listQueriesForProjectService(projectId: string) {
+export async function listQueriesForProjectService(
+  projectId: string,
+  actorRole: string,
+  filterProjectId?: string,
+) {
+  if (actorRole === "admin") {
+    const where =
+      filterProjectId && filterProjectId !== "all"
+        ? { projectId: filterProjectId }
+        : undefined;
+    return ContactQuery.findAll({
+      where,
+      order: [["createdAt", "DESC"]],
+    });
+  }
+
   return ContactQuery.findAll({
     where: {
       projectId: {
@@ -35,11 +50,16 @@ export async function createQueryService(input: CreateQueryInput) {
 export async function updateQueryReadService(
   id: string,
   actorProjectId: string,
+  actorRole: string,
   read: boolean,
 ) {
   const query = await ContactQuery.findByPk(id);
   if (!query) throw new AppError("Query not found.", 404);
-  if (query.projectId !== actorProjectId && query.projectId !== "general") {
+  if (
+    actorRole !== "admin" &&
+    query.projectId !== actorProjectId &&
+    query.projectId !== "general"
+  ) {
     throw new AppError("Forbidden.", 403);
   }
   query.read = Boolean(read);
@@ -47,10 +67,14 @@ export async function updateQueryReadService(
   return query;
 }
 
-export async function deleteQueryService(id: string, actorProjectId: string) {
+export async function deleteQueryService(
+  id: string,
+  actorProjectId: string,
+  actorRole: string,
+) {
   const query = await ContactQuery.findByPk(id);
   if (!query) throw new AppError("Query not found.", 404);
-  if (query.projectId !== actorProjectId) {
+  if (actorRole !== "admin" && query.projectId !== actorProjectId) {
     throw new AppError("Only queries addressed to your project can be deleted.", 403);
   }
   await query.destroy();

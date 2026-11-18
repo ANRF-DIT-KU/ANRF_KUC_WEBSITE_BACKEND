@@ -30,11 +30,12 @@ export async function createGalleryItemsService(input: CreateGalleryItemsInput) 
 export async function updateGalleryCaptionService(
   id: string,
   actorProjectId: string,
+  actorRole: string,
   caption: string,
 ) {
   const item = await GalleryItem.findByPk(id);
   if (!item) throw new AppError("Gallery photo not found.", 404);
-  if (item.projectId !== actorProjectId) {
+  if (actorRole !== "admin" && item.projectId !== actorProjectId) {
     throw new AppError("Forbidden: cannot modify another project's photo.", 403);
   }
 
@@ -43,10 +44,14 @@ export async function updateGalleryCaptionService(
   return item;
 }
 
-export async function deleteGalleryItemService(id: string, actorProjectId: string) {
+export async function deleteGalleryItemService(
+  id: string,
+  actorProjectId: string,
+  actorRole: string,
+) {
   const item = await GalleryItem.findByPk(id);
   if (!item) throw new AppError("Gallery photo not found.", 404);
-  if (item.projectId !== actorProjectId) {
+  if (actorRole !== "admin" && item.projectId !== actorProjectId) {
     throw new AppError("Forbidden: cannot delete another project's photo.", 403);
   }
   await item.destroy();

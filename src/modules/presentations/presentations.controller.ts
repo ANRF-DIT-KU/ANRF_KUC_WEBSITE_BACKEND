@@ -26,8 +26,13 @@ export const createPresentationController = asyncHandler(
     const slidesUrl = file ? `/uploads/${file.filename}` : undefined;
     const fileName = file ? file.originalname : undefined;
 
+    const projectId =
+      req.user!.role === "admin" && req.body.projectId
+        ? String(req.body.projectId)
+        : req.user!.projectId;
+
     const created = await createPresentationService({
-      projectId: req.user!.projectId,
+      projectId,
       title,
       date,
       venue,
@@ -44,7 +49,7 @@ export const createPresentationController = asyncHandler(
 export const deletePresentationController = asyncHandler(
   async (req: Request, res: Response) => {
     const id = String(req.params.id);
-    await deletePresentationService(id, req.user!.projectId);
+    await deletePresentationService(id, req.user!.projectId, req.user!.role);
     res.status(204).send();
   },
 );

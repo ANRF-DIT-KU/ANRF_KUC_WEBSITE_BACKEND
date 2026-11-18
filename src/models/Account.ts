@@ -1,7 +1,7 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/database.js";
 
-export type AccountRole = "pi" | "member";
+export type AccountRole = "admin" | "pi" | "member";
 
 export interface AccountAttributes {
   id: string;
@@ -45,7 +45,7 @@ Account.init(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM("pi", "member"),
+      type: DataTypes.ENUM("admin", "pi", "member"),
       allowNull: false,
     },
     username: {

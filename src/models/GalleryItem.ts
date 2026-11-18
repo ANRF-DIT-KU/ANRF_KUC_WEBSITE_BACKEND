@@ -50,7 +50,7 @@ GalleryItem.init(
       allowNull: true,
     },
     uploadedBy: {
-      type: DataTypes.ENUM("pi", "member"),
+      type: DataTypes.ENUM("admin", "pi", "member"),
       allowNull: true,
     },
   },

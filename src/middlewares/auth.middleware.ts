@@ -36,8 +36,20 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction) =
 };
 
 export const requirePI = (req: Request, _res: Response, next: NextFunction) => {
-  if (!req.user || req.user.role !== "pi") {
-    return next(new AppError("Only Project Investigators can perform this action.", 403));
+  if (!req.user || (req.user.role !== "pi" && req.user.role !== "admin")) {
+    return next(
+      new AppError(
+        "Only Project Investigators or Administrators can perform this action.",
+        403,
+      ),
+    );
+  }
+  next();
+};
+
+export const requireAdmin = (req: Request, _res: Response, next: NextFunction) => {
+  if (!req.user || req.user.role !== "admin") {
+    return next(new AppError("Administrator privileges required.", 403));
   }
   next();
 };

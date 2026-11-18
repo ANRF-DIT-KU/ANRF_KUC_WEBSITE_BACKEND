@@ -38,14 +38,18 @@ export async function createBulletinService(input: UpsertBulletinInput) {
 export async function updateBulletinService(
   id: string,
   actorProjectId: string,
+  actorRole: string,
   input: UpsertBulletinInput,
 ) {
   const bulletin = await Bulletin.findByPk(id);
   if (!bulletin) throw new AppError("Bulletin not found.", 404);
-  if (bulletin.projectId !== actorProjectId) {
+  if (actorRole !== "admin" && bulletin.projectId !== actorProjectId) {
     throw new AppError("Forbidden: cannot modify another project's bulletin.", 403);
   }
 
+  if (actorRole === "admin" && input.projectId) {
+    bulletin.projectId = input.projectId;
+  }
   bulletin.volume = input.volume.trim();
   bulletin.issue = input.issue.trim();
   bulletin.title = input.title.trim();
@@ -62,10 +66,14 @@ export async function updateBulletinService(
   return bulletin;
 }
 
-export async function deleteBulletinService(id: string, actorProjectId: string) {
+export async function deleteBulletinService(
+  id: string,
+  actorProjectId: string,
+  actorRole: string,
+) {
   const bulletin = await Bulletin.findByPk(id);
   if (!bulletin) throw new AppError("Bulletin not found.", 404);
-  if (bulletin.projectId !== actorProjectId) {
+  if (actorRole !== "admin" && bulletin.projectId !== actorProjectId) {
     throw new AppError("Forbidden: cannot delete another project's bulletin.", 403);
   }
   await bulletin.destroy();

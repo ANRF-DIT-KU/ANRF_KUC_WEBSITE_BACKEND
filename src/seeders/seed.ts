@@ -198,6 +198,19 @@ async function runSeed() {
 
     const passwordHash = await bcrypt.hash(env.defaultSeedPassword, 10);
 
+    const adminExists = await Account.findOne({
+      where: { projectId: "admin", role: "admin" },
+    });
+    if (!adminExists) {
+      await Account.create({
+        projectId: "admin",
+        role: "admin",
+        username: "admin",
+        passwordHash,
+        isDefaultPassword: true,
+      });
+    }
+
     for (const team of seedTeams) {
       await ProjectTeam.upsert(team);
 

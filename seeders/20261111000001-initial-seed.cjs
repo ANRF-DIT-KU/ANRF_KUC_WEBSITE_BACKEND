@@ -271,28 +271,40 @@ module.exports = {
     }));
     await queryInterface.bulkInsert("project_teams", teamRows);
 
-    const accountRows = seedTeams.flatMap((team) => [
+    const accountRows = [
       {
         id: crypto.randomUUID(),
-        projectId: team.projectId,
-        role: "pi",
-        username: `${team.projectId}-pi`,
+        projectId: "admin",
+        role: "admin",
+        username: "admin",
         passwordHash,
         isDefaultPassword: true,
         createdAt: now,
         updatedAt: now,
       },
-      {
-        id: crypto.randomUUID(),
-        projectId: team.projectId,
-        role: "member",
-        username: `${team.projectId}-team`,
-        passwordHash,
-        isDefaultPassword: true,
-        createdAt: now,
-        updatedAt: now,
-      },
-    ]);
+      ...seedTeams.flatMap((team) => [
+        {
+          id: crypto.randomUUID(),
+          projectId: team.projectId,
+          role: "pi",
+          username: `${team.projectId}-pi`,
+          passwordHash,
+          isDefaultPassword: true,
+          createdAt: now,
+          updatedAt: now,
+        },
+        {
+          id: crypto.randomUUID(),
+          projectId: team.projectId,
+          role: "member",
+          username: `${team.projectId}-team`,
+          passwordHash,
+          isDefaultPassword: true,
+          createdAt: now,
+          updatedAt: now,
+        },
+      ]),
+    ];
     await queryInterface.bulkInsert("accounts", accountRows);
 
     // 2. Seed Bulletins

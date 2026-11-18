@@ -26,7 +26,7 @@ export const getMeController = asyncHandler(async (req: Request, res: Response) 
 export const getProjectAccountsController = asyncHandler(
   async (req: Request, res: Response) => {
     const projectId = String(req.params.projectId);
-    if (req.user!.projectId !== projectId) {
+    if (req.user!.role !== "admin" && req.user!.projectId !== projectId) {
       throw new AppError("Forbidden: project mismatch.", 403);
     }
     const accounts = await getProjectAccountsService(projectId);
@@ -39,10 +39,10 @@ export const updateCredentialsController = asyncHandler(
     const projectId = String(req.params.projectId);
     const targetRole = String(req.params.role) as AccountRole;
 
-    if (req.user!.projectId !== projectId) {
+    if (req.user!.role !== "admin" && req.user!.projectId !== projectId) {
       throw new AppError("Forbidden: project mismatch.", 403);
     }
-    if (targetRole !== "pi" && targetRole !== "member") {
+    if (targetRole !== "admin" && targetRole !== "pi" && targetRole !== "member") {
       throw new AppError("Invalid account role.", 400);
     }
 
@@ -53,7 +53,7 @@ export const updateCredentialsController = asyncHandler(
 
     const updated = await updateCredentialsService({
       actorId: req.user!.sub,
-      actorProjectId: req.user!.projectId,
+      actorProjectId: projectId,
       actorRole: req.user!.role,
       targetRole,
       currentPassword,

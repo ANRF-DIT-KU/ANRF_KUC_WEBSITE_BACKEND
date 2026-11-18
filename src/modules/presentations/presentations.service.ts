@@ -33,10 +33,14 @@ export async function createPresentationService(input: CreatePresentationInput) 
   });
 }
 
-export async function deletePresentationService(id: string, actorProjectId: string) {
+export async function deletePresentationService(
+  id: string,
+  actorProjectId: string,
+  actorRole: string,
+) {
   const item = await Presentation.findByPk(id);
   if (!item) throw new AppError("Presentation not found.", 404);
-  if (item.projectId !== actorProjectId) {
+  if (actorRole !== "admin" && item.projectId !== actorProjectId) {
     throw new AppError("Forbidden: cannot delete another project's presentation.", 403);
   }
   await item.destroy();

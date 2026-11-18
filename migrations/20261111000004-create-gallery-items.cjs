@@ -23,7 +23,7 @@ module.exports = {
         allowNull: true,
       },
       uploadedBy: {
-        type: Sequelize.ENUM("pi", "member"),
+        type: Sequelize.ENUM("admin", "pi", "member"),
         allowNull: true,
       },
       createdAt: {

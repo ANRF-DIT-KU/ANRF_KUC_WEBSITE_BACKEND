@@ -23,7 +23,7 @@ export const getProjectTeamController = asyncHandler(
 export const updateProjectTeamController = asyncHandler(
   async (req: Request, res: Response) => {
     const projectId = String(req.params.projectId);
-    if (req.user!.projectId !== projectId) {
+    if (req.user!.role !== "admin" && req.user!.projectId !== projectId) {
       throw new AppError("Forbidden: cannot modify another project's team.", 403);
     }
 

@@ -89,7 +89,7 @@ export async function updateCredentialsService(input: UpdateCredentialsInput) {
     newPassword,
   } = input;
 
-  if (actorRole !== "pi" && targetRole !== actorRole) {
+  if (actorRole !== "admin" && actorRole !== "pi" && targetRole !== actorRole) {
     throw new AppError("You can only change the credentials of your own account.", 403);
   }
 
