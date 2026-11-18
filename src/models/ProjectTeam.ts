@@ -19,6 +19,7 @@ export interface TeamMember {
 
 export interface ProjectTeamAttributes {
   projectId: string;
+  displayOrder?: number;
   projectTitle: string;
   pi: TeamPiInfo;
   coInvestigators: TeamCoInvestigator[];
@@ -32,6 +33,7 @@ export class ProjectTeam
   implements ProjectTeamAttributes
 {
   declare projectId: string;
+  declare displayOrder: number;
   declare projectTitle: string;
   declare pi: TeamPiInfo;
   declare coInvestigators: TeamCoInvestigator[];
@@ -45,6 +47,11 @@ ProjectTeam.init(
     projectId: {
       type: DataTypes.STRING(64),
       primaryKey: true,
+    },
+    displayOrder: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
     projectTitle: {
       type: DataTypes.TEXT,

@@ -211,8 +211,12 @@ async function runSeed() {
       });
     }
 
-    for (const team of seedTeams) {
-      await ProjectTeam.upsert(team);
+    for (let i = 0; i < seedTeams.length; i++) {
+      const team = seedTeams[i];
+      await ProjectTeam.upsert({
+        ...team,
+        displayOrder: i + 1,
+      });
 
       const piExists = await Account.findOne({
         where: { projectId: team.projectId, role: "pi" },

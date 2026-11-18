@@ -3,7 +3,10 @@ import { AppError } from "../../utils/AppError.js";
 
 export async function listTeamsService() {
   return ProjectTeam.findAll({
-    order: [["createdAt", "ASC"]],
+    order: [
+      ["displayOrder", "ASC"],
+      ["createdAt", "ASC"],
+    ],
   });
 }
 
@@ -20,6 +23,9 @@ export async function updateProjectTeamService(
   const team = await ProjectTeam.findByPk(projectId);
   if (!team) throw new AppError("Project team not found.", 404);
 
+  if (typeof payload.displayOrder === "number") {
+    team.displayOrder = payload.displayOrder;
+  }
   team.projectTitle = payload.projectTitle.trim();
   team.pi = {
     name: payload.pi.name.trim(),

@@ -260,8 +260,9 @@ module.exports = {
     const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
 
     // 1. Seed Project Teams & Accounts (1 PI + 1 Member account per project)
-    const teamRows = seedTeams.map((team) => ({
+    const teamRows = seedTeams.map((team, idx) => ({
       projectId: team.projectId,
+      displayOrder: idx + 1,
       projectTitle: team.projectTitle,
       pi: JSON.stringify(team.pi),
       coInvestigators: JSON.stringify(team.coInvestigators),
