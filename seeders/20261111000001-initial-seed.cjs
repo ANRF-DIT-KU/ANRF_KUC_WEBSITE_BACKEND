@@ -265,6 +265,7 @@ module.exports = {
       displayOrder: idx + 1,
       projectTitle: team.projectTitle,
       pi: JSON.stringify(team.pi),
+      uohPis: JSON.stringify(team.uohPis || []),
       coInvestigators: JSON.stringify(team.coInvestigators),
       members: JSON.stringify(team.members),
       createdAt: now,

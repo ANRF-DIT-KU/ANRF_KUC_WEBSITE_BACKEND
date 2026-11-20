@@ -32,8 +32,18 @@ export async function updateProjectTeamService(
     role: payload.pi.role.trim(),
     affiliation: payload.pi.affiliation.trim(),
   };
+  team.uohPis = (payload.uohPis || [])
+    .map((p) => ({
+      name: p.name.trim(),
+      role: p.role?.trim() || "Project Investigator",
+      affiliation: p.affiliation?.trim() || "University of Hyderabad (Hub)",
+    }))
+    .filter((p) => p.name);
   team.coInvestigators = (payload.coInvestigators || [])
-    .map((c) => ({ name: c.name.trim() }))
+    .map((c) => ({
+      name: c.name.trim(),
+      ...(c.institution === "UoH" ? { institution: "UoH" as const } : {}),
+    }))
     .filter((c) => c.name);
   team.members = (payload.members || [])
     .map((m) => ({

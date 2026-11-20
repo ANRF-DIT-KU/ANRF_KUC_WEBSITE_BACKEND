@@ -9,6 +9,7 @@ export interface TeamPiInfo {
 
 export interface TeamCoInvestigator {
   name: string;
+  institution?: "KU" | "UoH";
 }
 
 export interface TeamMember {
@@ -22,6 +23,7 @@ export interface ProjectTeamAttributes {
   displayOrder?: number;
   projectTitle: string;
   pi: TeamPiInfo;
+  uohPis?: TeamPiInfo[];
   coInvestigators: TeamCoInvestigator[];
   members: TeamMember[];
   createdAt?: Date;
@@ -36,6 +38,7 @@ export class ProjectTeam
   declare displayOrder: number;
   declare projectTitle: string;
   declare pi: TeamPiInfo;
+  declare uohPis: TeamPiInfo[];
   declare coInvestigators: TeamCoInvestigator[];
   declare members: TeamMember[];
   declare readonly createdAt: Date;
@@ -60,6 +63,11 @@ ProjectTeam.init(
     pi: {
       type: DataTypes.JSON,
       allowNull: false,
+    },
+    uohPis: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: [],
     },
     coInvestigators: {
       type: DataTypes.JSON,

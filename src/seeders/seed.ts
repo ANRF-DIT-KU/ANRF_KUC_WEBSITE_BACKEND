@@ -215,6 +215,7 @@ async function runSeed() {
       const team = seedTeams[i];
       await ProjectTeam.upsert({
         ...team,
+        uohPis: [],
         displayOrder: i + 1,
       });
 
